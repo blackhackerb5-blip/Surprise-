@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine 💘</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(135deg, #ff5f9e, #ffc371);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Comic Sans MS', cursive;
+  overflow: hidden;
+}
+
+.container {
+  text-align: center;
+  color: white;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 2.2rem;
+  text-shadow: 0 0 10px #ff1e56;
+}
+
+.glow {
+  font-size: 3rem;
+  color: #fff;
+  text-shadow: 0 0 20px #ff1e56, 0 0 40px #ff7eb3;
+  animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+
+.buttons {
+  margin-top: 40px;
+  position: relative;
+  height: 150px;
+}
+
+button {
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  position: absolute;
+}
+
+#yes {
+  background: #ff1e56;
+  color: white;
+  left: 50%;
+  transform: translateX(-120%);
+}
+
+#no {
+  background: white;
+  color: #ff1e56;
+  left: 50%;
+  transform: translateX(20%);
+}
+
+.hidden { display: none; }
+
+.heart {
+  position: fixed;
+  font-size: 20px;
+  animation: float 6s linear infinite;
+}
+
+@keyframes float {
+  from { transform: translateY(100vh); opacity: 1; }
+  to { transform: translateY(-10vh); opacity: 0; }
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+.cry {
+  position: fixed;
+  font-size: 30px;
+  animation: float 4s linear, shake 0.4s infinite;
+}
+
+#message {
+  font-size: 1.5rem;
+  margin-top: 20px;
+  min-height: 80px;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1 id="question">
+    Will you be my Valentine,<br>
+    my cutiee <span class="glow">Aradhya</span>? 💖
+  </h1>
+
+  <div class="buttons">
+    <button id="yes">Yes 💘</button>
+    <button id="no">No 😝</button>
+  </div>
+
+  <div id="celebrate" class="hidden">
+    <div class="glow">Aradhya 💕</div>
+    <div id="message"></div>
+  </div>
+</div>
+
+<canvas id="fireworks"></canvas>
+
+<audio id="music" loop>
+  <source src="senorita-melody.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
+const question = document.getElementById("question");
+const buttons = document.querySelector(".buttons");
+const celebrate = document.getElementById("celebrate");
+const message = document.getElementById("message");
+const music = document.getElementById("music");
+
+// NO button escape 😈
+noBtn.addEventListener("mouseenter", () => {
+  noBtn.style.left = Math.random() * 80 + "vw";
+  noBtn.style.top = Math.random() * 80 + "vh";
+});
+
+// ❤️ Floating heart
+function createHeart() {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerHTML = "❤️";
+  heart.style.left = Math.random() * 100 + "vw";
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 6000);
+}
+
+// 😭 Crying emoji
+function cryingEmoji() {
+  const cry = document.createElement("div");
+  cry.className = "cry";
+  cry.innerHTML = "😭";
+  cry.style.left = Math.random() * 100 + "vw";
+  document.body.appendChild(cry);
+  setTimeout(() => cry.remove(), 4000);
+}
+
+noBtn.addEventListener("click", cryingEmoji);
+
+// 💌 Typing message
+const text =
+  "From this moment on,\n" +
+  "you are my favorite notification 💕\n" +
+  "my favorite smile 😌\n" +
+  "and my forever Valentine 💖";
+
+let i = 0;
+function typeText() {
+  if (i < text.length) {
+    message.innerHTML += text[i] === "\n" ? "<br>" : text[i];
+    i++;
+    setTimeout(typeText, 60);
+  }
+}
+
+// 🎆 Fireworks
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+let particles = [];
+
+function firework() {
+  for (let i = 0; i < 250; i++) {
+    particles.push({
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      vx: (Math.random() - 0.5) * 12,
+      vy: (Math.random() - 0.5) * 12,
+      life: 100,
+      color: `hsl(${Math.random() * 360},100%,60%)`
+    });
+  }
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach((p, i) => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life--;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+    ctx.fill();
+    if (p.life <= 0) particles.splice(i, 1);
+  });
+  requestAnimationFrame(animate);
+}
+
+// ❤️ Burst from YES
+function burstHeartsFromYes() {
+  const rect = yesBtn.getBoundingClientRect();
+  for (let i = 0; i < 15; i++) {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "❤️";
+    heart.style.left = rect.left + rect.width / 2 + "px";
+    heart.style.top = rect.top + "px";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 4000);
+  }
+}
+
+// YES click 💖
+yesBtn.onclick = () => {
+  question.style.display = "none";
+  buttons.style.display = "none";
+  celebrate.classList.remove("hidden");
+
+  // Music fade-in 🎶
+  music.volume = 0;
+  music.play();
+  let v = 0;
+  const fade = setInterval(() => {
+    if (v < 0.8) {
+      v += 0.02;
+      music.volume = v;
+    } else clearInterval(fade);
+  }, 100);
+
+  firework();
+  animate();
+  typeText();
+  burstHeartsFromYes();
+  setInterval(createHeart, 300);
+};
+</script>
+
+</body>
+</html>
